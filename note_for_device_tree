@@ -6,3 +6,54 @@
 	前面是特指，后面是泛指
 3.设备节点以及label的命名
 	命名遵循<name>[@<unit-address>]其中<>中的内容是必选项，[]内容是可选项。
+	对于挂在内存控件的设备而言，@字符后跟的一般就是该设备在内存控件的基地址。
+	对于挂在i2c总线上的外设而言，＠后面一般跟的是从设备的i2c地址。
+	可以给一个设备节点添加label，之后用&label的形式访问这个label。
+3.设备编码
+	可寻址的设备使用如下信息在设备树中编码地址信息：
+	reg
+		#address-cells
+		#size-cells
+	其中reg的组织形式为reg = <address1 length1 [address2 length2]...>
+	address为１个或多个32位整型，而length 的意义则意味着从address到address+length-1的地址范围都属于该节点
+	若#size-cells=0,则length位空
+	address-cells和size-cells分别决定了reg属性的address和length的长度
+	ranges 是地址转换表
+4.中断连接
+	interrupt-controller中断控制器标识
+	interrupt-parent 指定它所依附的终端控制器的phandle
+	interrupts用到中断的设备节点
+5.GPIO，时钟,pinmux连接
+	GPIO其对应的设备节点需声明gpio-controller属性，并设置#gpio-cells大小，例如#gpio-cells为２的时候，第一个cell标示GPIO号，
+	第二个为GPIO的极性，０为高电平有效，１为低电平有效
+	使用GPIO的设备则通过定义命名xxx-gpios属性来引用GPIO控制器的设备节点
+	------------节点名
+	|
+	|    ---------单元地址
+	|    |       --------------属性名
+	v    |       |                   -------------属性值
+/{           v       |                   |
+	node@0{      v                   v
+		|a-string-property = "A string";
+节点属性------->|a-string-list-property = "first  string","second string";
+		|a-byte-data-property = [0x01 0x23 0x34 0x56];
+					---------------------
+	child-node@0{
+		first-child-property;
+		second-child-property=<1>;
+		a-reference-to-something = <&node1>;
+		};	
+	child-node@1{};
+	};
+node1:node@1{
+ ^            an-cmpty-property;
+ |	      a-cell-property = <1 2 3 4>;
+ |	      child-node@2{
+label		      
+	      };
+
+      };
+
+};
+
+
